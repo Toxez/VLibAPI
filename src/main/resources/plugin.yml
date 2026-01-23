@@ -1,0 +1,7 @@
+name: VLibAPI
+version: '${project.version}'
+main: ua.vdev.vlibapi.VLibAPI
+api-version: '1.20'
+load: STARTUP
+authors: [Tox_8729]
+website: https://t.me/vdev1337
