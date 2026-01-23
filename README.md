@@ -11,7 +11,7 @@
 <dependency>
     <groupId>com.github.Toxez</groupId>
     <artifactId>VLibAPI</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.0-RELEASE</version>
     <scope>provided</scope>
 </dependency>
 ```
