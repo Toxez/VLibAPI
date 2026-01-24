@@ -1,5 +1,7 @@
 # VLibAPI
 
+## Подключение
+### Maven
 ```xml
 <repository>
     <id>jitpack.io</id>
@@ -11,11 +13,29 @@
 <dependency>
     <groupId>com.github.Toxez</groupId>
     <artifactId>VLibAPI</artifactId>
-    <version>1.0.0-RELEASE</version>
+    <version>1.0.0-RELEASE</version> <!-- укажите актуальную версию -->
     <scope>provided</scope>
 </dependency>
 ```
 
+### Gradle
+```groovy
+dependencyResolutionManagement { 
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
+
+```groovy
+dependencies {
+    implementation 'com.github.Toxez:VLibAPI:1.0.0-RELEASE' // укажите актуальную версию
+}
+```
+
+### plugin.yml
 ```yaml
 depend: [VLibAPI]
 ```
