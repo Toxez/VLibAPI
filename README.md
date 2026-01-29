@@ -5,6 +5,9 @@
   <img src="https://img.shields.io/badge/Minecraft-1.20–1.21+-orange" alt="Supported versions"/>
   <img src="https://img.shields.io/badge/Platform-Paper%20%7C%20Spigot-blue" alt="Platform"/>
   <img src="https://img.shields.io/badge/Java-17%2B-red" alt="Java"/>
+  <a href="https://t.me/vdev1337">
+    <img src="https://img.shields.io/badge/Telegram-VDev-2CA5E0?logo=telegram&logoColor=white"/>
+  </a>
 </p>
 
 >### Что может эта библиотека:
@@ -243,10 +246,4 @@ Task.timerAsyncSelf(0L, 20L, task -> {
     }
 });
 ```
-
-<p align="center">
-  <a href="https://t.me/vdev1337">
-    <img src="https://img.shields.io/badge/Telegram-VDev-2CA5E0?logo=telegram&logoColor=white"/>
-  </a>
-</p>
 
