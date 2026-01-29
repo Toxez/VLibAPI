@@ -7,11 +7,14 @@
   <img src="https://img.shields.io/badge/Java-17%2B-red" alt="Java"/>
 </p>
 
-### Что может эта библиотека:
+>### Что может эта библиотека:
+>
+> - Поддержка цветов через TextColor (минимеседж)
+> - Удобная система логов через SLF4J
+> - Работа с игроками (отправка сообщения, работа с инв, получения ника и UUID игрока и тд...)
+> - Удобная работа с Scheduler
 
- - Поддержка цветов через TextColor (минимеседж)
- - Удобная система логов через SLF4J
- - Работа с игроками (отправка сообщения, работа с инв, получения ника и UUID игрока и тд...)
+> **VLibAPI** — это просто сборник повторяющегося кода, который мне надоело писать по сто раз
 
 # Подключение
 ### Maven
@@ -26,7 +29,7 @@
 <dependency>
     <groupId>com.github.Toxez</groupId>
     <artifactId>VLibAPI</artifactId>
-    <version>1.0.0-RELEASE</version> <!-- укажите актуальную версию -->
+    <version>1.0.2-RELEASE</version> <!-- укажите актуальную версию -->
     <scope>provided</scope>
 </dependency>
 ```
@@ -44,7 +47,7 @@ dependencyResolutionManagement {
 
 ```groovy
 dependencies {
-    implementation 'com.github.Toxez:VLibAPI:1.0.0-RELEASE' // укажите актуальную версию
+    implementation 'com.github.Toxez:VLibAPI:1.0.2-RELEASE' // укажите актуальную версию
 }
 ```
 
@@ -102,21 +105,21 @@ public class Test {
 
 ### Работа с игроками
 
-PlayerFind — Поиск и состояние
+### PlayerFind — Поиск и состояние
 ```java
-// код внутри {} выполнится ТОЛЬКО если игрок онлайн
+// проверка по нику
 PlayerFind.name("Tox_8729").ifPresent(player -> {
     player.sendMessage("да ты крут");
 });
 
-// проверка онлайн ли игрок
+// проверка онлайн ли игрок (код внутри {} выполнится ТОЛЬКО если игрок онлайн)
 if (PlayerFind.isOnline("Tox_8729")) { ... }
 
 // получить всех игроков
 PlayerFind.all().forEach(p -> ...);
 ```
 
-Жизнь и еда
+### Жизнь и еда
 ```java
 // полностью восстановить (хп + еда + убрать эффектыи огонь)
 PlayerLife.restore(player);
@@ -131,7 +134,7 @@ PlayerLife.feed(player);
 PlayerLife.gm(player, GameMode.CREATIVE);
 ```
 
-Инвентарь
+### Инвентарь
 ```java
 // очистить всё
 PlayerInv.clear(player);
@@ -139,11 +142,11 @@ PlayerInv.clear(player);
 // выдать предмет (если нет места выкинет рядом)
 PlayerInv.give(player, itemStack);
 
-// проверка есть ли место
+// проверка есть ли место в инв
 if (PlayerInv.hasSpace(player)) { ... }
 ```
 
-Сообщения
+### Сообщения
 ```java
 // Ссообщение в чат (сразу с цветами)
 PlayerMsg.send(player, "<green>текст");
@@ -155,16 +158,95 @@ PlayerMsg.action(player, "<green>текст");
 PlayerMsg.title(player, "<green>текст", "<green>текст");
 ```
 
-Благодаря PlayerFind можно например
+#### Благодаря PlayerFind можно например
 ```java
-PlayerFind.name(args[0]).ifPresent(p -> {
-    PlayerInv.clear(p);
-    PlayerInv.give(p, kitItem);
-    PlayerMsg.action(p, "<green>вы получили предметы");
+// аолучаем всех игроков
+PlayerFind.all().stream()
+    // оставляем только тех, у кого есть право
+    .filter(player -> player.hasPermission("perm.tox"))
+        // проверяем есть ли у игрока место в инвентаре
+        .filter(PlayerInv::hasSpace)
+    // действия для каждого прошедшего игрока
+    .forEach(player -> {
+        // выдаем алмаз (если места нет то упадет под ноги)
+        PlayerInv.give(player, new ItemStack(Material.DIAMOND));
+        // сообщение
+        PlayerMsg.send(player, "<green>вы получили <bold>алмаз</bold>");
+    });
+```
+
+#### Пример экшен бара всем игрокам
+```java
+PlayerFind.all().forEach(player -> PlayerMsg.action(p, "текст"));
+```
+
+### Удобная работа с Scheduler
+Синхронные задачи
+```java
+// выполнить сразу
+Task.sync(() -> {
+    PlayerMsg.send(player, "просто пример");
+});
+```
+```java 
+// выполнить один раз с задержкой (в тиках)
+Task.later(20L, () -> {
+    PlayerMsg.send(player, "1 сек");
+});
+```
+```java 
+// повторяющаяся задача
+Task.timer(0L, 20L, () -> {
+    PlayerMsg.send(player, "повторяеться");
 });
 ```
 
-Пример экшен бара всем игрокам
+#### Асинхронные задачи
 ```java
-PlayerFind.all().forEach(p -> PlayerMsg.action(p, "текст"));
+// выполнить асинхронно
+Task.async(() -> {
+    loadData();
+});
 ```
+```java
+// асинхронно с задержкой
+Task.laterAsync(40L, () -> {
+    heavy();
+});
+```
+```java
+// асинхронный таймер
+Task.timerAsync(0L, 100L, () -> {
+    update();
+});
+```
+
+#### Таймеры с управлением
+
+Эти методы передают BukkitTask внутрь
+что позволяет остановить таймер из самой задачи
+
+Синхронный таймер
+```java
+Task.timerSelf(0L, 20L, task -> {
+    if (seconds-- <= 0) {
+        task.cancel(); // остановка таймера
+        PlayerMsg.send(player, "завершён");
+    }
+});
+```
+Асинхронный таймер
+```java
+Task.timerAsyncSelf(0L, 20L, task -> {
+    if (!running) {
+        task.cancel();
+    }
+});
+```
+
+<p align="center">
+  <a href="https://t.me/vdev1337">
+    <img src="https://img.shields.io/badge/Telegram-VDev-2CA5E0?logo=telegram&logoColor=white"/>
+  </a>
+</p>
+

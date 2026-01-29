@@ -4,6 +4,7 @@ import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -22,7 +23,7 @@ public class PlayerFind {
         return Bukkit.getPlayerExact(name) != null;
     }
 
-    public Iterable<? extends Player> all() {
+    public Collection<? extends Player> all() {
         return Bukkit.getOnlinePlayers();
     }
 }

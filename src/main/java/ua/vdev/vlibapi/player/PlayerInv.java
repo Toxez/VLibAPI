@@ -12,6 +12,7 @@ public class PlayerInv {
         player.getInventory().clear();
         player.getInventory().setArmorContents(null);
         player.getInventory().setExtraContents(null);
+        player.getInventory().setItemInOffHand(null);
     }
 
     public boolean hasSpace(Player player) {

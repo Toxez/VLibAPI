@@ -13,7 +13,7 @@ public final class VLibAPI extends JavaPlugin {
     public void onEnable() {
         instance = this;
         log = LogUtil.of(this);
-        log.info("Версия библиотеки - 1.0.1-RELEASE");
+        log.info("Автор - Tox_8729");
     }
 
     @Override
