@@ -11,11 +11,11 @@ import java.util.Map;
 @UtilityClass
 public class TextColor {
 
-    private final MiniMessage MM = MiniMessage.builder()
+    private static final MiniMessage MINI = MiniMessage.builder()
             .strict(false)
             .build();
-
-    private final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.builder()
+    private static final MiniMessage MINI_SERIALIZER = MiniMessage.miniMessage();
+    private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.builder()
             .character(ChatColor.COLOR_CHAR)
             .hexColors()
             .useUnusualXRepeatedCharacterHexFormat()
@@ -39,20 +39,22 @@ public class TextColor {
 
     private Component formatMixed(String msg) {
         boolean hasLegacy = msg.indexOf('&') != -1 || msg.indexOf(ChatColor.COLOR_CHAR) != -1;
-        boolean hasMini = msg.indexOf('<') != -1 && msg.indexOf('>') != -1;
+        boolean hasMini = msg.indexOf('<') != -1;
 
-        if (!hasLegacy && !hasMini) return Component.text(msg);
+        if (!hasLegacy && !hasMini) {
+            return Component.text(msg);
+        }
 
-        if (!hasLegacy) return MM.deserialize(msg);
+        if (!hasLegacy) {
+            return MINI.deserialize(msg);
+        }
 
-        if (!hasMini) return LEGACY.deserialize(msg.replace('&', ChatColor.COLOR_CHAR));
+        if (!hasMini) {
+            return LEGACY.deserialize(msg.replace('&', ChatColor.COLOR_CHAR));
+        }
 
-        String converted = convertLegacyToMini(msg);
-        return MM.deserialize(converted);
-    }
-
-    private String convertLegacyToMini(String msg) {
-        Component legacy = LEGACY.deserialize(msg.replace('&', ChatColor.COLOR_CHAR));
-        return MM.serialize(legacy);
+        Component fromLegacy = LEGACY.deserialize(msg.replace('&', ChatColor.COLOR_CHAR));
+        String miniString = MINI_SERIALIZER.serialize(fromLegacy);
+        return MINI.deserialize(miniString);
     }
 }

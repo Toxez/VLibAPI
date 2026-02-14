@@ -7,7 +7,7 @@
 
     <groupId>ua.vdev</groupId>
     <artifactId>VLibAPI</artifactId>
-    <version>1.0.5-RELEASE</version>
+    <version>1.0.5b-RELEASE</version>
     <packaging>jar</packaging>
 
     <name>VLibAPI</name>
