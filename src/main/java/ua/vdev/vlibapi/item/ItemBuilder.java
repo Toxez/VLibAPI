@@ -31,7 +31,7 @@ public class ItemBuilder {
     public static ItemBuilder create(ItemStack base) {
         return new ItemBuilder(base.clone());
     }
-    
+
     public static ItemStack fromMap(Map<?, ?> map, Map<String, String> placeholders) {
         if (map == null || map.isEmpty()) return null;
 
