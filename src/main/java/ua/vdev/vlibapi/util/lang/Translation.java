@@ -5,7 +5,9 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import ua.vdev.vlibapi.util.LogUtil;
 import ua.vdev.vlibapi.util.TextColor;
+
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -23,32 +25,52 @@ public class Translation {
         this.log = LogUtil.of(plugin);
     }
 
-    public void load(String langName) {
+    public void load(String activeLang, List<String> supportedLangs) {
         messages.clear();
         File folder = new File(plugin.getDataFolder(), "lang");
-        File file = new File(folder, langName + ".yml");
+        if (!folder.exists()) folder.mkdirs();
+
+        supportedLangs.forEach(this::unpackResource);
+
+        loadActiveLanguage(activeLang);
+    }
+
+    private void unpackResource(String langName) {
+        String path = "lang/" + langName + ".yml";
+        File file = new File(plugin.getDataFolder(), path);
 
         if (!file.exists()) {
-            Optional.ofNullable(plugin.getResource("lang/" + langName + ".yml"))
-                    .ifPresentOrElse(
-                            in -> plugin.saveResource("lang/" + langName + ".yml", false),
-                            () -> {
-                                folder.mkdirs();
-                                try { file.createNewFile(); } catch (Exception ignored) {}
-                                log.warn("языковой файл {}.yml не найден в джарнике, на всякий будет создан такой пустой", langName);
+            Optional.ofNullable(plugin.getResource(path)).ifPresentOrElse(
+                    is -> {
+                        plugin.saveResource(path, false);
+                        log.info("на всякий файл {} будет выгружен из джарника", langName);
+                    },
+                    () -> {
+                        try {
+                            if (file.createNewFile()) {
+                                log.warn("файл {}.yml в джарнике нет, так что будет создан пустой на всякий", langName);
                             }
-                    );
+                        } catch (IOException ignored) {}
+                    }
+            );
+        }
+    }
+
+    private void loadActiveLanguage(String langName) {
+        File file = new File(plugin.getDataFolder(), "lang/" + langName + ".yml");
+
+        if (!file.exists()) {
+            log.error("файла {}.yml вообще не существует, даже пустого", langName);
+            return;
         }
 
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
 
-        config.getValues(true).forEach((key, val) -> {
-            if (val instanceof String || val instanceof List) {
-                messages.put(key, parseValue(val));
-            }
-        });
+        config.getKeys(true).stream()
+                .filter(config::isString)
+                .forEach(key -> messages.put(key, parseValue(config.get(key))));
 
-        log.info("загружена локализация: {} ({} ключей)", langName, messages.size());
+        log.info("загрузилось локализацию {}", langName, messages.size());
     }
 
     private String parseValue(Object v) {
@@ -62,7 +84,7 @@ public class Translation {
     }
 
     public Component get(String key) {
-        return TextColor.parse(messages.getOrDefault(key, "<missing:" + key + ">"));
+        return get(key, Map.of());
     }
 
     public Component get(String key, Map<String, String> placeholders) {
