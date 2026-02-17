@@ -27,11 +27,11 @@ public class Translation {
 
     public void load(String activeLang, List<String> supportedLangs) {
         messages.clear();
+
         File folder = new File(plugin.getDataFolder(), "lang");
         if (!folder.exists()) folder.mkdirs();
 
         supportedLangs.forEach(this::unpackResource);
-
         loadActiveLanguage(activeLang);
     }
 
@@ -67,10 +67,10 @@ public class Translation {
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
 
         config.getKeys(true).stream()
-                .filter(config::isString)
+                .filter(key -> config.isString(key) || config.isList(key))
                 .forEach(key -> messages.put(key, parseValue(config.get(key))));
 
-        log.info("загрузилось локализацию {}", langName, messages.size());
+        log.info("загрузилось локализацию {} ({} настроек)", langName, messages.size());
     }
 
     private String parseValue(Object v) {
