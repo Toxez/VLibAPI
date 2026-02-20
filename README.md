@@ -32,7 +32,7 @@
 <dependency>
     <groupId>com.github.Toxez</groupId>
     <artifactId>VLibAPI</artifactId>
-    <version>1.0.9-RELEASE</version> <!-- укажите актуальную версию -->
+    <version>1.1.0-RELEASE</version> <!-- укажите актуальную версию -->
     <scope>provided</scope>
 </dependency>
 ```
@@ -50,7 +50,7 @@ dependencyResolutionManagement {
 
 ```groovy
 dependencies {
-    implementation 'com.github.Toxez:VLibAPI:1.0.2-RELEASE' // укажите актуальную версию
+    implementation 'com.github.Toxez:VLibAPI:1.1.0-RELEASE' // укажите актуальную версию
 }
 ```
 

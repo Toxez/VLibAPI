@@ -44,6 +44,12 @@ public class ItemBuilder {
             return null;
         }
 
+        if (placeholders != null) {
+            for (Map.Entry<String, String> entry : placeholders.entrySet()) {
+                matName = matName.replace("{" + entry.getKey() + "}", entry.getValue());
+            }
+        }
+
         Material material = Material.matchMaterial(matName.toUpperCase());
         if (material == null) {
             Bukkit.getLogger().severe("Материал '" + matName + "' не найден");

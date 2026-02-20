@@ -90,6 +90,6 @@ public class Translation {
     public Component get(String key, Map<String, String> placeholders) {
         return find(key)
                 .map(raw -> TextColor.parse(raw, placeholders))
-                .orElseGet(() -> TextColor.parse("<missing:" + key + ">"));
+                .orElseGet(() -> TextColor.parse("<red>сообщение:" + key + " нету"));
     }
 }
