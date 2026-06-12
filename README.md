@@ -32,7 +32,7 @@
 <dependency>
     <groupId>com.github.Toxez</groupId>
     <artifactId>VLibAPI</artifactId>
-    <version>1.1.0-RELEASE</version> <!-- укажите актуальную версию -->
+    <version>1.1.1-RELEASE</version> <!-- укажите актуальную версию -->
     <scope>provided</scope>
 </dependency>
 ```
